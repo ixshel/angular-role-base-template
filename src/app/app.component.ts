@@ -1,4 +1,8 @@
 import { Component } from '@angular/core';
+import { User } from './user.model';
+import { Router } from '@angular/router';
+import { AuthenticationService } from './authentication.service';
+import { Role } from './role.model';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +10,21 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'role-based-template';
+  currentUser: User;
+
+  constructor(
+    private router: Router,
+    private authenticationService: AuthenticationService
+  ) {
+    this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
+  }
+
+  get isAdmin() {
+    return this.currentUser && this.currentUser.role === Role.Admin;
+  }
+
+  logout() {
+    this.authenticationService.logout();
+    this.router.navigate(['/login']);
+  }
 }
